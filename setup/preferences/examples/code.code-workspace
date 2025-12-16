@@ -1,0 +1,25 @@
+{
+    "folders": [
+        {
+            "name": "FPSupport",
+            "path": "."
+        }
+    ],
+    "settings": {
+        "python.languageServer": "Pylance",
+        "python.analysis.autoSearchPaths": true,
+        "python.defaultInterpreterPath": ".venv/bin/python",
+        "cSpell.words": [
+        ],
+        "cSpell.ignorePaths": [
+            "**/.git/objects/**",
+            "data",
+            "**.code-workspace",
+            "**.env",
+            "conf.yml",
+            "mkdocs.yml",
+            "pyproject.toml"
+        ],
+        "cSpell.language": "en-ca"
+    }
+}

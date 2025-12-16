@@ -1,0 +1,100 @@
+# {{ cookiecutter.project_slug }}/Makefile Copyright 2025 George Cummings
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+# compliance with the License. You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under the License
+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied. See the License for the specific language governing permissions and limitations under the
+# License.
+
+.DEFAULT_GOAL := setup
+.SILENT:
+EXAMPLES = src/examples
+ME = src/{{ cookiecutter.project_slug }}
+PREF_DIR = setup/preferences
+PREF_EXAMPLES = $(PREF_DIR)/examples
+
+
+# Environment ---------------------------------------------------------------
+
+.PHONY: venv
+venv:
+	poetry add python@{{ cookiecutter.python_version }}
+	poetry add -G dev pyyaml pytest pytest-cov pytest-mock pytest-asyncio mkdocs mkdocs-material \
+		mkdocstrings mkdocs-version-annotations black pylint pydocstyle pytest-bdd pyenchant \
+		textstat
+
+
+.PHONY: githooks
+githooks:
+	setup/githook_setup.sh
+
+.PHONY: defaults 
+defaults:
+	[ -f code.code-workspace ] || cp $(PREF_EXAMPLES)/code.code-workspace .; \
+	[ -f $(PREF_DIR)/black.toml ] || cp $(PREF_EXAMPLES)/black $(PREF_DIR)/black.toml; \
+	[ -f $(PREF_DIR)/pylintc ] || cp $(PREF_EXAMPLES)/pylintrc $(PREF_DIR); \
+	[ -f /etc/NIXOS ] && ([ -f $(PREF_DIR)/pylintc ] || cp $(PREF_EXAMPLES)/shell.nix .); \
+	cp $(PREF_EXAMPLES)/gitignore .gitignore; \
+
+.PHONY: setup
+setup: venv githooks defaults
+
+# Linting --------------------------------------------------------------------
+.PHONY: pylint
+pylint:
+	echo "Running pylint"
+	poetry run pylint $(ME) examples
+
+.PHONY: pydocstyle
+pydocstyle:
+	echo "Running pydocstyle..."
+	poetry run pydocstyle --convention=google $(ME) $(EXAMPLES)
+	echo "ok."
+
+.PHONY: black 
+black:
+	echo "Running black to force formatting"
+	poetry run black $(ME) examples
+
+.PHONY: black-diff
+black-diff:
+	echo "Running black --check --diff"
+	poetry run black --check --diff $(ME) $(EXAMPLES)
+
+.PHONY: lint
+lint: pylint pydocstyle black-diff
+
+# Spelling --------------------------------------------------------------------
+# This requires the "enchant" binary package installed on your system or home
+.PHONY: spellcheck
+spellcheck:
+	echo "Adjusting the whitelist from code.code-workspace"
+	poetry run setup/scripts/update_pylint_dictionary.py
+	poetry run python -c 'import enchant' || (echo "Please install enchant on your system" && false)
+	poetry run pylint --disable all --enable spelling --spelling-dict en_CA \
+	  --spelling-private-dict-file=setup/dictionaries/whitelist $(ME) $(EXAMPLES)
+
+# Documentation --------------------------------------------------------------
+.PHONY: docs
+docs:
+	poetry run mkdocs gh-deploy
+
+# Testing --------------------------------------------------------------------
+
+.PHONY: unittest
+unittest:
+	echo "Running python unit tests."; \
+	poetry run python -m pytest tests/unit
+
+.PHONY: coverage
+coverage:
+	echo "Running python unit tests for all green at 100% coverage."; \
+	poetry run python -m pytest tests/unit \
+	--cov --cov-report=term-missing | grep 'TOTAL.*100%'
+
+.PHONY: tests
+tests: unittest coverage
