@@ -25,8 +25,7 @@ venv:
 	poetry add python@{{ cookiecutter.python_version }}
 	poetry add -G dev pyyaml pytest pytest-cov pytest-mock pytest-asyncio mkdocs mkdocs-material \
 		mkdocstrings mkdocs-version-annotations black pylint pydocstyle pytest-bdd pyenchant \
-		textstat
-
+		textstat jedi-language-server
 
 .PHONY: githooks
 githooks:
