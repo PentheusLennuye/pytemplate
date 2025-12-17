@@ -1,30 +1,15 @@
 {
-    "classifiers": [
-        "Development Status :: 3 - Alpha",
-        "Environment :: Console",
-        "Framework:: FastAPI",
-        "Intended Audience :: Developers",
-        "Intended Audience :: Education",
-        "Intended Audience :: Information Technology",
-        "Intended Audience :: System Administrators",
-        "License :: OSI Approved :: Apache Software License",
-        "Programming Language :: Python :: 3",
-        "Topic :: Software Development",
-        "Topic :: System :: Networking",
-        "Topic :: System :: Systems Administration",
-        "Topic :: Text Editors :: Documentation"
-    ],
-    "dependencies": [],
+    "classifiers": "[\"Development Status :: 3 - Alpha\"]",
     "description": "A single sentence on what, who, why, where, when, how.",
     "email": "gmc@cummings-online.ca",
     "full_name": "George Cummings",
-    "keywords": [],
     "project_name": "Concise and Catchy Name",
+    "project_short": "{{ cookiecutter.project_name.lower().replace(' ', '-') }}",
     "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
     "python_version": "3.13",
     "github_repo": "pentheuslennuye",
     "github_user": "PentheusLennuye",
     "tags": "[python]",
-    "today_iso": "{% now 'local', '%Y-%m-%d'}",
-    "year": "{% now 'local', '%Y'}"
+    "today_iso": "{% now 'local', '%Y-%m-%d'%}",
+    "year": "{% now 'local', '%Y'%}"
 }

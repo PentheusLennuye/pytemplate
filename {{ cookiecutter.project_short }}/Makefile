@@ -1,4 +1,4 @@
-# {{ cookiecutter.project_slug }}/Makefile Copyright 2025 George Cummings
+# concise_and_catchy_name/Makefile Copyright 2025 George Cummings
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
 # compliance with the License. You may obtain a copy of the License at
@@ -10,22 +10,18 @@
 # implied. See the License for the specific language governing permissions and limitations under the
 # License.
 
-.DEFAULT_GOAL := setup
+.DEFAULT_GOAL := unittest
 .SILENT:
 EXAMPLES = src/examples
 ME = src/{{ cookiecutter.project_slug }}
 PREF_DIR = setup/preferences
 PREF_EXAMPLES = $(PREF_DIR)/examples
 
+# The following is a wrapper for NixOS Python projects
+WRAP = $(shell [ -f /etc/NIXOS ] && echo 'nix-shell --run "')
+STOP = $(shell [ -f /etc/NIXOS ] && echo '"')
 
 # Environment ---------------------------------------------------------------
-
-.PHONY: venv
-venv:
-	poetry add python@{{ cookiecutter.python_version }}
-	poetry add -G dev pyyaml pytest pytest-cov pytest-mock pytest-asyncio mkdocs mkdocs-material \
-		mkdocstrings mkdocs-version-annotations black pylint pydocstyle pytest-bdd pyenchant \
-		textstat jedi-language-server
 
 .PHONY: githooks
 githooks:
@@ -39,14 +35,29 @@ defaults:
 	[ -f /etc/NIXOS ] && ([ -f $(PREF_DIR)/pylintc ] || cp $(PREF_EXAMPLES)/shell.nix .); \
 	cp $(PREF_EXAMPLES)/gitignore .gitignore; \
 
+.PHONY: venv
+venv:
+	$(WRAP)poetry add python@3.13$(STOP); \
+	$(WRAP)poetry add -G dev pyyaml pytest pytest-cov pytest-mock \
+		pytest-asyncio mkdocs mkdocs-material mkdocstrings mkdocs-version-annotations black \
+		pylint pydocstyle pytest-bdd pyenchant textstat jedi-language-server$(STOP);
+
+.PHONY: git
+git:
+	if [ ! -d .git ]; \
+	  then \
+	    git init .; git add .; git commit -m'Initial commit'; \
+	    git remote add origin $(ME); \
+	fi
+
 .PHONY: setup
-setup: venv githooks defaults
+setup: git githooks defaults venv
 
 # Linting --------------------------------------------------------------------
 .PHONY: pylint
 pylint:
 	echo "Running pylint"
-	poetry run pylint $(ME) examples
+	poetry run pylint $(ME) $(EXAMPLES)
 
 .PHONY: pydocstyle
 pydocstyle:
@@ -57,7 +68,7 @@ pydocstyle:
 .PHONY: black 
 black:
 	echo "Running black to force formatting"
-	poetry run black $(ME) examples
+	poetry run black $(ME) $(EXAMPLES)
 
 .PHONY: black-diff
 black-diff:
@@ -71,11 +82,12 @@ lint: pylint pydocstyle black-diff
 # This requires the "enchant" binary package installed on your system or home
 .PHONY: spellcheck
 spellcheck:
-	echo "Adjusting the whitelist from code.code-workspace"
-	poetry run setup/scripts/update_pylint_dictionary.py
-	poetry run python -c 'import enchant' || (echo "Please install enchant on your system" && false)
-	poetry run pylint --disable all --enable spelling --spelling-dict en_CA \
-	  --spelling-private-dict-file=setup/dictionaries/whitelist $(ME) $(EXAMPLES)
+	echo "Adjusting the whitelist from code.code-workspace"; \
+	$(WRAP)poetry run setup/scripts/update_pylint_dictionary.py$(STOP); \
+	$(WRAP)poetry run python -c 'import enchant' || \
+		(echo 'Please install enchant on your system' && false)$(STOP); \
+	${WRAP}poetry run pylint --disable all --enable spelling --spelling-dict en_CA \
+	    --spelling-private-dict-file=setup/dictionaries/whitelist $(ME) $(EXAMPLES)$(STOP);
 
 # Documentation --------------------------------------------------------------
 .PHONY: docs

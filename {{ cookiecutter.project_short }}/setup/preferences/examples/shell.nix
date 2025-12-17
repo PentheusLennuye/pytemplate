@@ -3,7 +3,7 @@
 with import <nixpkgs> {};
 let
   blue = "\\e[0;94m";
-  me = "{{ cookecutter.project_slug }}";
+  me = "{{ cookiecutter.project_short }}";
   reset="\\e[0m";
 in
 pkgs.mkShell {
@@ -24,20 +24,36 @@ pkgs.mkShell {
      export LD_LIBRARY_PATH=$NIX_LD_LIBRARY_PATH
 
      # Define PS1 every return -----------------------------------------------------------
-     update_prompt() {
+     ahead=
+     behind=
+     ahead_behind() {
+        git branch -vv | grep -q origin || return
+        ahead=$([ `git rev-list --count @{u}..HEAD` -gt 0 ] && echo -n "⇡")
+        behind=$([ `git rev-list --count HEAD..@{u}` -gt 0 ] && echo -n "⇣")
+     }
+
+     git_prompt() {
         dc="${blue}"
         rs="${reset}"
 
-        branch=" $(git status 2>/dev/null | grep 'On branch' | sed 's/On branch //')"
+
         dir="$dc\nnix-shell:…/\$(pwd | sed 's/.*\(${me}\)/\1/')"
         untracked=$([ `git ls-files -o --exclude-standard | wc -l` -gt 0 ] && echo -n "?")
         deleted=$([ `git ls-files -d | wc -l` -gt 0 ] && echo -n "x")
         modified=$([ `git ls-files -m | wc -l` -gt 0 ] && echo -n "!")
         staged=$([ `git diff --staged --name-only | wc -l` -gt 0 ] && echo -n "+")
-        ahead=$([ `git rev-list --count @{u}..HEAD` -gt 0 ] && echo -n "⇡")
-        behind=$([ `git rev-list --count HEAD..@{u}` -gt 0 ] && echo -n "⇣")
 
-        PS1="$dir $rs$branch [$modified$deleted$staged$untracked$ahead$behind]\n> "
+        branch="$(git status 2>/dev/null | grep 'On branch' | sed 's/On branch //')"
+        ahead_behind $branch
+        dbranch=" $branch"
+
+        PS1="$dir $rs$dbranch [$modified$deleted$staged$untracked$ahead$behind]\n> "
+     }
+
+     update_prompt() {
+        if [ $(pwd | grep "${me}") ]; then
+            git_prompt
+        fi
      }
 
      export PROMPT_COMMAND=update_prompt

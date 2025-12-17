@@ -1,14 +1,14 @@
 [project]
 authors = [
-    {name = "{{ cookiecutter.full_name", email = "{{ cookiecutter.email }}"}
+    {name = "{{ cookiecutter.full_name }}", email = "{{ cookiecutter.email }}"}
 ]
 classifiers = {{ cookiecutter.classifiers }}
-dependencies = {{ cookiecutter.dependencies }}
+dependencies = []
 description = "{{ cookiecutter.description }}"
-keywords = {{ cookiecutter.keywords }}
+keywords = []
 name = "{{ cookiecutter.project_slug }}"
 readme = "README.md"
-requires-python = ">={{ cookiecutter.python_version }}"
+requires-python = ">={{ cookiecutter.python_version }},<4.0"
 version = "0.1.0"
 
 [project.urls]
@@ -16,7 +16,7 @@ changelog = "https://github.com/{{ cookiecutter.github_repo }}/{{ cookiecutter.p
 documentation = "https://{{ cookiecutter.github_repo }}.github.io/{{ cookiecutter.project_slug }}/"
 homepage = "https://{{ cookiecutter.github_repo }}.github.io/{{ cookiecutter.project_slug }}/"
 issues = "https://github.com/{{ cookiecutter.github_repo }}/{{ cookiecutter.project_slug }}/issues"
-repository = "https://github.com/{{ cookiecutter.github_reop/{{ cookiecutter.project_slug }}.git"
+repository = "https://github.com/{{ cookiecutter.github_repo }}/{{ cookiecutter.project_slug }}.git"
 
 [tool.poetry]
 packages = [{include = "{{ cookiecutter.project_slug }}", from = "src"}]
@@ -27,13 +27,13 @@ addopts = [
     "--ignore=.venv",
     "--import-mode=importlib"
 ]
-asyncio_default_fixture_loop_scope = "fixture"
+asyncio_default_fixture_loop_scope = "session"
 cache_dir = "/tmp/pytest"
 filterwarnings = [
   "ignore::pydantic.fields.PydanticDeprecatedSince20",
   "ignore:DeprecationWarning"
 ]
-pythonpath = [ "src/{{ cookiecutter.project_slug", "tests" ]
+pythonpath = [ "src/{{ cookiecutter.project_slug }}", "tests" ]
 
 ## Linting ---------------------------------------------------------------------------------------
 # The two tools should conform to each other. Pylint for detection, Black to reformat
@@ -52,7 +52,6 @@ limit-inference-results = 100
 persistent = true
 py-version = "{{ cookiecutter.python_version }}"
 recursive = false
-suggestion-mode = true
 unsafe-load-any-extension = false
 
 [tool.pylint."BASIC"]
@@ -180,3 +179,6 @@ target-version = ['py312']
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+# Items from poetry add --------------------------------------------------------------------------
+

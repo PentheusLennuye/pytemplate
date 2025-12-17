@@ -1,6 +1,6 @@
 """[A one-line summary of the module or program, ended with a period].
 
-[Module Name] Copyright {{ cookiecutter.year }} {{ cookiecutter.full_name }}
+{{ cookiecutter.project_slug }}.py Copyright {{ cookiecutter.year }} {{ cookiecutter.full_name }}
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
 compliance with the License.
@@ -17,15 +17,11 @@ License.
 
 Description:
 
-[This is an overall description of the module. If any classes or functions are meant for export,
-list them.]
-
+This module serves only to ensure that python unit testing can go ahead.
 
 Typical usage example:
 
-  import {{ cookiecutter.project_slug }}
-
-  < insert code here >
+poetry run python -m pytest tests/unit
 
 """
 
@@ -51,31 +47,27 @@ class X:
 
         Returns:
             object X
-
-        Raises:
-            Fizzbuzz error
         """
         self.thing_a: Any = None
         self.thing_b: Any = None
 
-    def public_function(self, my_var: Any) -> int:
-        """The summary of the function ended with a period.
+    def public_function(self, my_var: str) -> int | None:
+        """The summary of the function and it must end with a period followed by a blank line.
 
         A deeper description if necessary but only if the information is useful. One should not
         need to describe easy-to-understand algorithms but perhaps the reason for it.
 
         Args:
-            my_var: the denominator of the fizzbuzz.
+            my_var: the value to send back.
 
         Returns:
-            The fizzbuzz algorithm major version as an integer.
-
-        Raises:
-            FizzBuzzError if fizzbuzz cannot blog.
-
+            A tail call returning the string case as an integer or None. Yes, the programmer is
+            aware that this is Python.
         """
-        return int(my_var)
-
+        try:
+            return int(my_var)
+        except ValueError:
+            return None
 
 if __name__ == "__main__":
     x = X()
