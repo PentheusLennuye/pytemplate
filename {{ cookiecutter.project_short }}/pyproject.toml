@@ -33,7 +33,8 @@ filterwarnings = [
   "ignore::pydantic.fields.PydanticDeprecatedSince20",
   "ignore:DeprecationWarning"
 ]
-pythonpath = [ "src/{{ cookiecutter.project_slug }}", "tests" ]
+pythonpath = [ "src" ]
+testpaths = [ "tests" ]
 
 ## Linting ---------------------------------------------------------------------------------------
 # The two tools should conform to each other. Pylint for detection, Black to reformat

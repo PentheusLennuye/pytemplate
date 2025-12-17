@@ -38,7 +38,7 @@ defaults:
 .PHONY: venv
 venv:
 	$(WRAP)poetry add python@3.13$(STOP); \
-	$(WRAP)poetry add -G dev pyyaml pytest pytest-cov pytest-mock \
+	$(WRAP)poetry add -G dev pydantic pyyaml pytest pytest-cov pytest-mock \
 		pytest-asyncio mkdocs mkdocs-material mkdocstrings mkdocs-version-annotations black \
 		pylint pydocstyle pytest-bdd pyenchant textstat jedi-language-server$(STOP);
 
@@ -51,7 +51,7 @@ git:
 	fi
 
 .PHONY: setup
-setup: git githooks defaults venv
+setup: defaults venv git githooks
 
 # Linting --------------------------------------------------------------------
 .PHONY: pylint
@@ -104,8 +104,12 @@ unittest:
 .PHONY: coverage
 coverage:
 	echo "Running python unit tests for all green at 100% coverage."; \
-	poetry run python -m pytest tests/unit \
-	--cov --cov-report=term-missing | grep 'TOTAL.*100%'
+	poetry run python -m pytest --cov --cov-report=term-missing | grep 'TOTAL.*100%'
+
+.PHONY: detail
+detail:
+	echo "Running python unit tests for all green at 100% coverage."; \
+	poetry run python -m pytest --cov --cov-report=term-missing
 
 .PHONY: tests
 tests: unittest coverage

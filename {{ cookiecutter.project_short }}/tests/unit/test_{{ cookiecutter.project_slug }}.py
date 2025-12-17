@@ -31,11 +31,11 @@ class TestX(TestCase):
         """Each test will use the same class, but separate objects."""
         self.x = t.X()
 
-    def x_public_function_works_with_int_as_string(self):
+    def test_X_public_function_works_with_int_as_string(self):
         """The public function will return an integer from a string."""
         assert self.x.public_function("5") == 5
 
-    def x_public_function_returns_none_on_bad_string(self):
+    def test_X_public_function_returns_none_on_bad_string(self):
         """The public function string catches a value error."""
         assert self.x.public_function("five") == None
 
