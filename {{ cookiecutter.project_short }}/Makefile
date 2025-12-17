@@ -12,14 +12,34 @@
 
 .DEFAULT_GOAL := unittest
 .SILENT:
+
+# ┌───────────────────────────────────────────────────────────────────────────┐
+# │                                Variables                                  │
+# └───────────────────────────────────────────────────────────────────────────┘
+
+# Directories --------------------------------------------------------------
+
 EXAMPLES = src/examples
 ME = src/{{ cookiecutter.project_slug }}
 PREF_DIR = setup/preferences
 PREF_EXAMPLES = $(PREF_DIR)/examples
 
-# The following is a wrapper for NixOS Python projects
+
+# Git Commands --------------------------------------------------------------
+
+CHANGED_PYTHON_FILES=$(shell git diff --name-only main src test | grep -E ".py\b")
+CHANGED_JSON_FILES=$(shell git diff --name-only main src test | grep -E ".json\b")
+CHANGED_YAML_FILES=$(shell git diff --name-only main src test | grep -E ".yaml\b")
+CHANGED_DOC_FILES=$(shell git diff --name-only README.md docs/content)
+
+# NixOS peculiarities -------------------------------------------------------
+
 WRAP = $(shell [ -f /etc/NIXOS ] && echo 'nix-shell --run "')
 STOP = $(shell [ -f /etc/NIXOS ] && echo '"')
+
+# ┌───────────────────────────────────────────────────────────────────────────┐
+# │                                Targets                                    │
+# └───────────────────────────────────────────────────────────────────────────┘
 
 # Environment ---------------------------------------------------------------
 
@@ -53,7 +73,9 @@ git:
 .PHONY: setup
 setup: defaults venv git githooks
 
+
 # Linting --------------------------------------------------------------------
+
 .PHONY: pylint
 pylint:
 	echo "Running pylint"
@@ -78,7 +100,9 @@ black-diff:
 .PHONY: lint
 lint: pylint pydocstyle black-diff
 
+
 # Spelling --------------------------------------------------------------------
+
 # This requires the "enchant" binary package installed on your system or home
 .PHONY: spellcheck
 spellcheck:
@@ -87,19 +111,26 @@ spellcheck:
 	$(WRAP)poetry run python -c 'import enchant' || \
 		(echo 'Please install enchant on your system' && false)$(STOP); \
 	${WRAP}poetry run pylint --disable all --enable spelling --spelling-dict en_CA \
-	    --spelling-private-dict-file=setup/dictionaries/whitelist $(ME) $(EXAMPLES)$(STOP);
+	    --spelling-private-dict-file=setup/dictionaries/whitelist \
+		$(CHANGED_PYTHON_FILES)$(STOP); \
+	${WRAP}poetry run enchant-2 -d en_CA -l -L -p setup/dictionaries/whitelist \
+	    $(CHANGED_DOC_FILES)$(STOP);
 
 # Documentation --------------------------------------------------------------
 .PHONY: docs
 docs:
 	poetry run mkdocs gh-deploy
 
-# Testing --------------------------------------------------------------------
+# Testing -----------------------------------------------------------------------------
+#
+# The tests folder has been placed in pyproject.toml, under [tool.pytest.ini_options]
+#
+# -------------------------------------------------------------------------------------
 
 .PHONY: unittest
 unittest:
 	echo "Running python unit tests."; \
-	poetry run python -m pytest tests/unit
+	poetry run python -m pytest
 
 .PHONY: coverage
 coverage:

@@ -1,5 +1,5 @@
 {
-  "black-formatter.args": ["-l 99", "-t py312"],
+  "black-formatter.args": ["-l 99", "-t {{ cookiecutter.python_version_slug }}"],
   "editor.fontFamily": "Input Mono, Menlo, Monaco, 'Courier New', monospace",
   "editor.inlayHints.enabled": "off",
   "editor.rulers": [ 99, 120 ],
