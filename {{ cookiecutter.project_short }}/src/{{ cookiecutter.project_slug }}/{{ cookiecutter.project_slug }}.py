@@ -28,7 +28,9 @@ poetry run python -m pytest tests/unit
 from typing import Any
 
 
-class X:
+# For your own classes, lose the pylint disable comment below. It is only here as an example.
+
+class X:  # pylint: disable=too-few-public-methods
     """Summary of class.
 
     Longer class information
@@ -61,15 +63,10 @@ class X:
             my_var: the value to send back.
 
         Returns:
-            A tail call returning the string case as an integer or None. Yes, the programmer is
-            aware that this is Python.
+            A tail call returning the string case as an integer, or None. Yes, the programmer is
+            aware that this is Python and there is no advantage to a tail call.
         """
         try:
             return int(my_var)
         except ValueError:
             return None
-
-if __name__ == "__main__":
-    x = X()
-    return public_function(5)
-

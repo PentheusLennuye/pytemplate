@@ -12,14 +12,34 @@
 
 .DEFAULT_GOAL := unittest
 .SILENT:
+
+# ┌───────────────────────────────────────────────────────────────────────────┐
+# │                                Variables                                  │
+# └───────────────────────────────────────────────────────────────────────────┘
+
+# Directories --------------------------------------------------------------
+
 EXAMPLES = src/examples
 ME = src/{{ cookiecutter.project_slug }}
 PREF_DIR = setup/preferences
 PREF_EXAMPLES = $(PREF_DIR)/examples
 
-# The following is a wrapper for NixOS Python projects
+
+# Git Commands --------------------------------------------------------------
+
+CHANGED_PYTHON_FILES=$(shell git diff --name-only main src tests | grep -E ".py\b")
+CHANGED_JSON_FILES=$(shell git diff --name-only main src tests | grep -E ".json\b")
+CHANGED_YAML_FILES=$(shell git diff --name-only main src tests | grep -E ".yaml\b")
+CHANGED_DOC_FILES=$(shell git diff --name-only README.md docs/content)
+
+# NixOS peculiarities -------------------------------------------------------
+
 WRAP = $(shell [ -f /etc/NIXOS ] && echo 'nix-shell --run "')
 STOP = $(shell [ -f /etc/NIXOS ] && echo '"')
+
+# ┌───────────────────────────────────────────────────────────────────────────┐
+# │                                Targets                                    │
+# └───────────────────────────────────────────────────────────────────────────┘
 
 # Environment ---------------------------------------------------------------
 
@@ -38,7 +58,7 @@ defaults:
 .PHONY: venv
 venv:
 	$(WRAP)poetry add python@3.13$(STOP); \
-	$(WRAP)poetry add -G dev pyyaml pytest pytest-cov pytest-mock \
+	$(WRAP)poetry add -G dev pydantic pyyaml pytest pytest-cov pytest-mock \
 		pytest-asyncio mkdocs mkdocs-material mkdocstrings mkdocs-version-annotations black \
 		pylint pydocstyle pytest-bdd pyenchant textstat jedi-language-server$(STOP);
 
@@ -51,9 +71,11 @@ git:
 	fi
 
 .PHONY: setup
-setup: git githooks defaults venv
+setup: defaults venv git githooks
+
 
 # Linting --------------------------------------------------------------------
+
 .PHONY: pylint
 pylint:
 	echo "Running pylint"
@@ -78,7 +100,9 @@ black-diff:
 .PHONY: lint
 lint: pylint pydocstyle black-diff
 
+
 # Spelling --------------------------------------------------------------------
+
 # This requires the "enchant" binary package installed on your system or home
 .PHONY: spellcheck
 spellcheck:
@@ -86,26 +110,38 @@ spellcheck:
 	$(WRAP)poetry run setup/scripts/update_pylint_dictionary.py$(STOP); \
 	$(WRAP)poetry run python -c 'import enchant' || \
 		(echo 'Please install enchant on your system' && false)$(STOP); \
-	${WRAP}poetry run pylint --disable all --enable spelling --spelling-dict en_CA \
-	    --spelling-private-dict-file=setup/dictionaries/whitelist $(ME) $(EXAMPLES)$(STOP);
+	echo "Running a spell check on changed code"; \
+	${WRAP}poetry run setup/scripts/spellcheck.py -d en_CA -p setup/dictionaries/whitelist \
+	    $(CHANGED_PYTHON_FILES)$(STOP);
+	echo "Running a spell check on changed docs"; \
+	${WRAP}poetry run setup/scripts/spellcheck.py -d en_CA -p setup/dictionaries/whitelist \
+	    $(CHANGED_DOC_FILES)$(STOP);
 
 # Documentation --------------------------------------------------------------
 .PHONY: docs
 docs:
 	poetry run mkdocs gh-deploy
 
-# Testing --------------------------------------------------------------------
+# Testing -----------------------------------------------------------------------------
+#
+# The tests folder has been placed in pyproject.toml, under [tool.pytest.ini_options]
+#
+# -------------------------------------------------------------------------------------
 
 .PHONY: unittest
 unittest:
 	echo "Running python unit tests."; \
-	poetry run python -m pytest tests/unit
+	poetry run python -m pytest
 
 .PHONY: coverage
 coverage:
 	echo "Running python unit tests for all green at 100% coverage."; \
-	poetry run python -m pytest tests/unit \
-	--cov --cov-report=term-missing | grep 'TOTAL.*100%'
+	poetry run python -m pytest --cov --cov-report=term-missing | grep 'TOTAL.*100%'
+
+.PHONY: detail
+detail:
+	echo "Running python unit tests for all green at 100% coverage."; \
+	poetry run python -m pytest --cov --cov-report=term-missing
 
 .PHONY: tests
 tests: unittest coverage
