@@ -36,6 +36,7 @@ DEBUG = 3
 
 State = namedtuple("State", ["args", "proofreader", "pwl"])
 
+
 def main() -> list:
     """Start here."""
     filepaths: list = []
@@ -54,6 +55,7 @@ def main() -> list:
 
     return errors
 
+
 def set_state() -> State:
     """Define the objects that are passed around the functions."""
     args: argparse.Namespace
@@ -64,7 +66,7 @@ def set_state() -> State:
     proofreader = checker.SpellChecker(
         args.dictionary,
         filters=[tokenize.EmailFilter, tokenize.URLFilter],  # type: ignore[reportArgumentType]
-        chunkers=[tokenize.HTMLChunker]   # type: ignore[reportArgumentType]
+        chunkers=[tokenize.HTMLChunker],  # type: ignore[reportArgumentType]
     )
     if args.personal is not None:
         pwl = enchant.request_pwl_dict(args.personal)
@@ -77,30 +79,30 @@ def set_state() -> State:
 def parse_arguments():
     """Pull in the user CLI command modifiers."""
     parser = argparse.ArgumentParser(
-        prog="spellcheck.py",
-        description="Check the spelling on files using the enchant-2 library",
+        prog="spellcheck.py", description="Check the spelling on files using the enchant-2 library"
     )
     parser.add_argument(
-        '-d',
-        '--dictionary',
+        "-d",
+        "--dictionary",
         type=str,
         required=False,
         metavar="language",
-        help="The language available on your system.", default=DEFAULT_LANG
+        help="The language available on your system.",
+        default=DEFAULT_LANG,
     )
     parser.add_argument(
-        '-p',
-        '--personal',
+        "-p",
+        "--personal",
         type=str,
         required=False,
         metavar="pwl",
-        help="A whitelist word files to supplement the main language dictionary"
+        help="A whitelist word files to supplement the main language dictionary",
     )
     parser.add_argument(
-        'filepaths',
+        "filepaths",
         nargs="*",  # no filepaths are ok. No spell check!
         type=str,
-        help="A space-delimited list of files and paths to inspect"
+        help="A space-delimited list of files and paths to inspect",
     )
     return parser.parse_args()
 
@@ -127,7 +129,7 @@ def read_file(filepath: str) -> str:
 
 def process_proofreader(state: State, filepath: str) -> list:
     """Investigate every error found in a file and correct if possible.
-    
+
     Args:
         the state, including:
             args: the user cli switches and arguments
