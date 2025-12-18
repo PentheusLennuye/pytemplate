@@ -16,6 +16,7 @@ pkgs.mkShell {
   NIX_LD = lib.fileContents "${stdenv.cc}/nix-support/dynamic-linker";
 
   packages = with pkgs; [
+    bc
     {{ cookiecutter.python_version_lslug }}
     poetry
   ];

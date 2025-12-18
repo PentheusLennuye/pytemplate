@@ -27,8 +27,8 @@ poetry run python -m pytest tests/unit
 
 from typing import Any
 
-
 # For your own classes, lose the pylint disable comment below. It is only here as an example.
+
 
 class X:  # pylint: disable=too-few-public-methods
     """Summary of class.
