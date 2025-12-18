@@ -27,9 +27,9 @@ PREF_EXAMPLES = $(PREF_DIR)/examples
 
 # Git Commands --------------------------------------------------------------
 
-CHANGED_PYTHON_FILES=$(shell git diff --name-only main src test | grep -E ".py\b")
-CHANGED_JSON_FILES=$(shell git diff --name-only main src test | grep -E ".json\b")
-CHANGED_YAML_FILES=$(shell git diff --name-only main src test | grep -E ".yaml\b")
+CHANGED_PYTHON_FILES=$(shell git diff --name-only main src tests | grep -E ".py\b")
+CHANGED_JSON_FILES=$(shell git diff --name-only main src tests | grep -E ".json\b")
+CHANGED_YAML_FILES=$(shell git diff --name-only main src tests | grep -E ".yaml\b")
 CHANGED_DOC_FILES=$(shell git diff --name-only README.md docs/content)
 
 # NixOS peculiarities -------------------------------------------------------
@@ -110,10 +110,11 @@ spellcheck:
 	$(WRAP)poetry run setup/scripts/update_pylint_dictionary.py$(STOP); \
 	$(WRAP)poetry run python -c 'import enchant' || \
 		(echo 'Please install enchant on your system' && false)$(STOP); \
-	${WRAP}poetry run pylint --disable all --enable spelling --spelling-dict en_CA \
-	    --spelling-private-dict-file=setup/dictionaries/whitelist \
-		$(CHANGED_PYTHON_FILES)$(STOP); \
-	${WRAP}poetry run enchant-2 -d en_CA -l -L -p setup/dictionaries/whitelist \
+	echo "Running a spell check on changed code"; \
+	${WRAP}poetry run setup/scripts/spellcheck.py -d en_CA -p setup/dictionaries/whitelist \
+	    $(CHANGED_PYTHON_FILES)$(STOP);
+	echo "Running a spell check on changed docs"; \
+	${WRAP}poetry run setup/scripts/spellcheck.py -d en_CA -p setup/dictionaries/whitelist \
 	    $(CHANGED_DOC_FILES)$(STOP);
 
 # Documentation --------------------------------------------------------------

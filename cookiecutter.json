@@ -1,5 +1,5 @@
 {
-    "classifiers": "[\"Development Status :: 3 - Alpha\",\n\"Intended Audience :: Information Technology\",\n\"License :: OSI Approved :: Apache Software License\",\"Programming Language :: Python :: 3\"]",
+    "classifiers": "[\n    \"Development Status :: 3 - Alpha\",\n    \"Intended Audience :: Information Technology\",\n    \"License :: OSI Approved :: Apache Software License\"\n,   \"Programming Language :: Python :: 3\"\n]",
     "description": "A single sentence on what, who, why, where, when, how",
     "email": "gmc@cummings-online.ca",
     "full_name": "George Cummings",

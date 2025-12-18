@@ -1,7 +1,7 @@
 {
     "folders": [
         {
-            "name": "{{ cookiecutter.project_slug",
+            "name": "{{ cookiecutter.project_short }}",
             "path": "."
         }
     ],
@@ -18,7 +18,8 @@
             "**.env",
             "conf.yml",
             "mkdocs.yml",
-            "pyproject.toml"
+            "pyproject.toml",
+            "setup/dictionaries/**"
         ],
         "cSpell.language": "en-ca"
     }

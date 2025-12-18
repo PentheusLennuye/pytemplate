@@ -1,2 +1,16 @@
 Args
 pytest
+md
+CHANGELOG
+mkdocs
+Makefile
+yml
+pyproject
+toml
+githooks
+githook
+README
+src
+json
+BDD
+prehooks

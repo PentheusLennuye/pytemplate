@@ -2,4 +2,4 @@ color = true
 line-length = 99
 safe = true
 skip-magic-trailing-comma = true
-target-version = ['{{ cookecutter.python_version_slug }}']
+target-version = ['{{ cookiecutter.python_version_slug }}']
