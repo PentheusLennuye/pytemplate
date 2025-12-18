@@ -14,3 +14,10 @@ pytest
 src
 toml
 yml
+py
+pylint
+ValueError
+unittest
+TestCase
+TestX
+setUp

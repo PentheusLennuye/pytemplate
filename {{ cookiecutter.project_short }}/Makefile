@@ -73,6 +73,11 @@ git:
 .PHONY: setup
 setup: defaults venv git githooks
 
+# Version Control ------------------------------------------------------------
+
+.PHONY: version-control
+version-control:
+	$(WRAP)poetry run setup/scripts/version_control.sh$(STOP)
 
 # Linting --------------------------------------------------------------------
 

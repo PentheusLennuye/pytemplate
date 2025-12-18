@@ -23,4 +23,7 @@ poetry run make lint || exit 3
 echo "4. Spelling"
 poetry run make spellcheck || exit 4
 
+echo "5. Version Tracking"
+poetry run make version_control  # This does not need to fail, just needs a warning.
+
 echo "Cleanliness checked. This does not include functional tests." 
