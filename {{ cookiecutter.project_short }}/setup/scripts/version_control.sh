@@ -8,11 +8,11 @@ branch_verson=
 target_version=
 
 get_branch_name() {
-    branch_name=$(git branch --show-current)
+    branch_name=$(git symbolic-ref --short HEAD)
 }
 
-exit_on_improper_branch_name() {
-    echo $branch_name | grep -E '^main$|^develop$|^hotfix/|^feature/|^bugfix/|^doc/'
+improper_branch_name() {
+    echo $branch_name | grep -E '^main$|^develop$|^hotfix/|^feature/|^bugfix/|^doc/|^rc/'
     if [ $? -ne 0 ]; then
         echo "'$branch_name' is not an acceptable branch name"
         exit 1
@@ -20,8 +20,10 @@ exit_on_improper_branch_name() {
     echo "branch name '$branch_name' is ok."
 }
 
-get_next_higher_branch_name() {
-    if [ "$branch_name" == "develop" ]; then
+get_target_branch_name() {
+    if [ "$branch_name" == "rc" ]; then
+        target="main"
+    elif [ `echo $branch_name | grep develop` ]; then  # rc shares the version w/ develop
         target="main"
     elif [ `echo $branch_name | grep hotfix` ]; then
         target="main"
@@ -30,7 +32,7 @@ get_next_higher_branch_name() {
     elif [ `echo $branch_name | grep bugfix` ]; then
         target="develop"
     else
-        target="stop"
+        target="stop"  # doc does not need any version change
     fi
 }
 
@@ -56,8 +58,8 @@ check_pyproject_version() {
 }
 
 get_branch_name
-exit_on_improper_branch_name
-get_next_higher_branch_name
+improper_branch_name || exit 1
+get_target_branch_name
 
 if [ "$target" == "stop" ]; then
     echo "Branch ${branch_name} does not need to compare version numbers"

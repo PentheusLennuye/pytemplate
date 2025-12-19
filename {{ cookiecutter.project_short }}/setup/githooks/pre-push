@@ -6,7 +6,7 @@ echo "Before pushing, running tests"
 
 # Ensure the branch name is correct
 echo -n "1. Checking that branch naming is correct..."
-name=$(git branch --show-current)
+name=$(git symbolic-ref --short HEAD)
 echo $name | grep -E '^main$|^develop$|^hotfix/|^feature/|^bugfix/|^doc/'
 if [ $? -ne 0 ]; then
     echo "'$name' is not an acceptable branch name"

@@ -64,7 +64,7 @@ If you want to know why coverage failed, you can run down the details.
 make detail
 ```
 
-Of course, since you are using test-driven development as a discipline, you won't need it that
+Of course, since you are using test-driven development as a discipline, you will not need it that
 much, will you?
 
 ### Spell Checking
@@ -80,6 +80,17 @@ If you disagree with the spell checker, add words to `setup/dictionaries/whiteli
 ```bash
 make lint
 ```
+
+### Version Control
+
+If you wish to confirm that you have set your version numbers against the next-higher branch in
+your development framework, run the following:
+
+```bash
+make version-control
+```
+
+It will run during `git push`, but it will only warn, not fail.
 
 ### Committing and Pushing Changes
 

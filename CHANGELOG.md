@@ -8,6 +8,10 @@ Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.0]
 
+### 1.1.0 2025-12-18
+
+- Added verification on gitflow
+
 ### 1.0.0 2025-12-17
 
 - Added version comparison to githooks pre-push and Makefile
