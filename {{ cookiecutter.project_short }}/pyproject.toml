@@ -25,6 +25,7 @@ packages = [{include = "{{ cookiecutter.project_slug }}", from = "src"}]
 addopts = [
     "--ignore=environments",
     "--ignore=.venv",
+    "--ignore=tests",
     "--import-mode=importlib"
 ]
 asyncio_default_fixture_loop_scope = "session"
