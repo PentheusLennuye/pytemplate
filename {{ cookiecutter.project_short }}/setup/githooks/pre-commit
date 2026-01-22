@@ -15,7 +15,7 @@ fi
 echo "branch name $name is ok."
 
 echo "1. black formatting, forced"
-poetry run make black | grep "reformatted" && \
+poetry run make black src | grep "reformatted" && \
   (echo "Black changed the code. Re-add and commit"; exit 1)
 
 echo "2. Unit tests"
