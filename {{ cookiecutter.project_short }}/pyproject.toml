@@ -49,11 +49,13 @@ clear-cache-post-run = false
 fail-under = 10
 ignore = "CVS"
 ignore-patterns = "^\\.#"
+init-hook = "import sys; sys.path.append('src')"
 jobs = 1
 limit-inference-results = 100
 persistent = true
 py-version = "{{ cookiecutter.python_version }}"
 recursive = false
+source-roots = ["src"]
 unsafe-load-any-extension = false
 
 [tool.pylint."BASIC"]
