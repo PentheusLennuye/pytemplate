@@ -57,10 +57,11 @@ defaults:
 
 .PHONY: venv
 venv:
-	$(WRAP)poetry add python@3.13$(STOP); \
+	$(WRAP)poetry config virtualenvs.in-project true$(STOP); \
+	$(WRAP)poetry add python@3.14$(STOP); \
 	$(WRAP)poetry add -G dev pydantic pyyaml pytest pytest-cov pytest-mock \
 		pytest-asyncio mkdocs mkdocs-material mkdocstrings mkdocs-version-annotations black \
-		pylint pydocstyle pytest-bdd pyenchant textstat jedi-language-server$(STOP);
+		pylint pydocstyle pytest-bdd textstat jedi-language-server$(STOP);
 
 .PHONY: git
 git:
